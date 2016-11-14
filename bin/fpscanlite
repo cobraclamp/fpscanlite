@@ -1,0 +1,2 @@
+BINPATH=`dirname $0`
+python "$BINPATH/../fpscanlite/fpscanlite.py" $@

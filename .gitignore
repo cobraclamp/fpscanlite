@@ -1,0 +1,10 @@
+wpscan/
+logs/
+
+*.pyc
+*.zip
+*.log
+*.txt
+
+dev.ini
+.DS_Store
