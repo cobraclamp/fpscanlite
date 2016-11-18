@@ -32,6 +32,8 @@ class Emailer(object):
 
 		self.prepare_zip()
 
+		vulnerable_sites = 0
+
 		d = datetime.datetime.now()
 		date = d.strftime("%A, %B %d, %Y at %H:%M")
 		send_to = self.config.get("email", "to")
@@ -43,15 +45,21 @@ class Emailer(object):
 		if self.vuns is not None:
 			vuns_string = "<br />"
 			for i, v in self.vuns.items():
-				vuns_string = vuns_string + "<li style=\"color:#FF0000;\">%s<strong>%s</strong></li>" % (v, i)
+
+				if len(v) > 0:
+					vulnerable_sites = vulnerable_sites + 1
+					vuns_string = vuns_string + "<li><strong>%s</strong><ul>" % (i)
+					for p in v:
+						vuns_string = vuns_string + "<li>%s</li>" % (p)
+					vuns_string = vuns_string + "</ul></li>"
 			new_text = """
 				<span style=\"color:#FF0000;\">
-					We found <strong>{0}</strong> sites with vunerabilities
+					We found <strong>{0}</strong> site(s) with vunerabilities
 					</span>:
 					<ul>
 					{1}
 					</ul>
-			""".format(len(vuns), vuns_string)
+			""".format(vulnerable_sites, vuns_string)
 			text = text + new_text
 		else:
 			text = text + "<img src=\"http://floating-point.com/fpscan.jpg\" alt=\"No Vunerabilities Found\" />"

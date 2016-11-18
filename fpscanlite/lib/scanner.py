@@ -20,9 +20,7 @@ class Scanner(object):
 
 	def run(self, prefix, domain, cmd):
 		logdir = self.config.get("files", "logs")
-		logfile = logdir + domain + "_" + prefix + ".log"
-		if not os.path.exists(logfile):
-			os.makedirs(logfile)
+		logfile = logdir + domain.replace(".", "") + "_" + prefix + ".txt"
 		args = shlex.split(cmd)
 
 		log = open( logfile, "a" )
@@ -38,14 +36,16 @@ class Scanner(object):
 		log_levels = ['[L]', '[M]', '[H]']
 		lines = {}
 		i = 0
+		li = 0
 
-		for infile in glob.glob(os.path.join(logdir, "*.log")):
+		for infile in glob.glob(os.path.join(logdir, "*.txt")):
 			with open(infile) as f:
+				name = infile.replace(logdir, "")
+				lines[name] = []
 				for l in f:
-					if "We found" in l:
-						if "could not determine a version" not  in l:
-							lines.update({infile.replace(logdir, ""): l.rstrip()})
-							i = i + 1
+					if "Title:" in l:
+						lines[name].append(l.rstrip())
+						i = i + 1
 					for log in log_levels:
 						if log in l:
 							lines.update({infile.replace(logdir, ""): l.rstrip()})
